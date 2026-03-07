@@ -2,6 +2,17 @@
 
 A TypeScript logging library focused on **wide events** and structured error handling.
 
+## Keeping This File Updated
+
+This file is a living document. **Update it proactively** whenever you encounter any of the following:
+
+- **Recurring mistake**: You made the same error twice, or you notice a pattern that's easy to get wrong (wrong import path, deprecated API, incorrect assumption) → add a note under the relevant section or a callout in Development Guidelines.
+- **Explicit guidance from the maintainer**: The maintainer corrects your approach, tells you to always/never do something, or points out a structural rule → capture it here immediately so future sessions follow the same rule.
+- **New pattern established**: A new convention is agreed on (file to update, naming rule, architecture decision) → document it so it's applied consistently going forward.
+- **Full update / reset**: If the maintainer says something equivalent to "everything needs to be updated" or "go through all X and make sure they're consistent" → after completing the work, add a note here summarizing what was done and what invariant to maintain.
+
+When updating this file, be specific and actionable. Prefer short targeted notes over long prose. Place notes near the relevant section they apply to.
+
 Inspired by [Logging Sucks](https://loggingsucks.com/) by [Boris Tane](https://x.com/boristane).
 
 ## Philosophy
@@ -692,6 +703,24 @@ import { defineEventHandler } from 'h3'
 import { useLogger } from 'evlog/nitro'
 import { createError } from 'evlog'
 ```
+
+## Documentation Invariants
+
+Rules established through past work — maintain these actively.
+
+### User-facing framework docs live in the skill, not here
+
+`skills/evlog/SKILL.md` is the source of truth for user-facing documentation (framework setup, adapters, enrichers). **When a new framework/adapter/enricher is added, update `skills/evlog/SKILL.md` first** — not this file.
+
+This file retains framework sections as development context (useful for understanding the codebase), but the internal skills (`.agents/skills/`) mandate updating the public skill, not this file.
+
+### Hono does not export `useLogger()`
+
+`evlog/hono` only exposes `evlog` and `EvlogVariables`. Logger access is via `c.get('log')` in handlers. Do **not** import or document `useLogger` for Hono — it doesn't exist. The other frameworks (Express, Fastify, Elysia) do export `useLogger()`.
+
+### README.md is a symlink
+
+`README.md` at the repo root is a symlink to `packages/evlog/README.md`. Edit the source (`packages/evlog/README.md`) directly — it's the same file.
 
 ## Development Guidelines
 
