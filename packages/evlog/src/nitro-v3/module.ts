@@ -1,5 +1,6 @@
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import type { Nitro } from 'nitro/types'
 import type { NitroModuleOptions } from '../nitro'
 
 export type { NitroModuleOptions }
@@ -9,14 +10,18 @@ const _dir = dirname(fileURLToPath(import.meta.url))
 export default function evlog(options?: NitroModuleOptions) {
   return {
     name: 'evlog',
-    setup(nitro: any) {
+    setup(nitro: Nitro) {
       // Push the plugin (no extension — Nitro's bundler resolves it)
       nitro.options.plugins = nitro.options.plugins || []
       nitro.options.plugins.push(resolve(_dir, 'plugin'))
 
       // Set error handler only if not already configured by user
       if (!nitro.options.errorHandler) {
-        nitro.options.errorHandler = resolve(_dir, 'errorHandler')
+        nitro.options.errorHandler = [resolve(_dir, 'errorHandler')]
+      } else if (Array.isArray(nitro.options.errorHandler)) {
+        nitro.options.errorHandler.unshift(resolve(_dir, 'errorHandler'))
+      } else if (typeof nitro.options.errorHandler === 'string') {
+        nitro.options.errorHandler = [resolve(_dir, 'errorHandler'), nitro.options.errorHandler]
       }
 
       // Inject config into runtimeConfig — works in production where the
