@@ -20,10 +20,21 @@ on:
       - '!packages/evlog/bench/baseline/**'
       - 'packages/evlog/tsdown.config.ts'
       - 'packages/evlog/vitest.config.ts'
+  workflow_dispatch:
+    inputs:
+      job:
+        description: Which job to run
+        required: true
+        type: choice
+        options:
+          - update-baseline
+          - compare
 
 jobs:
   update-baseline:
-    if: github.event_name == 'push'
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.job == 'update-baseline')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -68,7 +79,9 @@ jobs:
           labels: performance
 
   compare:
-    if: github.event_name == 'pull_request'
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.job == 'compare')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -117,6 +130,7 @@ jobs:
           echo "$EOF" >> "$GITHUB_OUTPUT"
 
       - name: Post PR comment
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
@@ -147,3 +161,7 @@ jobs:
                 body: fullBody,
               });
             }
+
+      - name: Print report
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "${{ steps.compare.outputs.report }}"

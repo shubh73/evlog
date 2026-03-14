@@ -233,7 +233,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "bench": "vitest bench bench/core/",
-    "bench:compare": "vitest bench bench/comparison/",
+    "bench:compare": "vitest bench bench/comparison/ && cp bench/results.json bench/baseline/comparison.json",
     "size": "bun bench/scripts/size.ts",
     "size:json": "bun bench/scripts/size.ts --json",
     "test": "vitest run",
