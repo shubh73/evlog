@@ -6,10 +6,6 @@ on:
       - main
     paths:
       - 'packages/evlog/src/**'
-      - 'packages/evlog/bench/core/**'
-      - 'packages/evlog/bench/comparison/**'
-      - 'packages/evlog/bench/scripts/**'
-      - '!packages/evlog/bench/baseline/**'
       - 'packages/evlog/tsdown.config.ts'
   pull_request:
     branches:
@@ -95,7 +91,7 @@ jobs:
               });
             }
 
-  update-baseline:
+  update-size-baseline:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -115,41 +111,20 @@ jobs:
       - name: Build evlog package
         run: bunx turbo run build --filter=evlog
 
-      - name: Run core benchmarks
-        working-directory: packages/evlog
-        run: bunx vitest bench bench/core/
-
-      - name: Save core baseline
+      - name: Measure bundle size
         working-directory: packages/evlog
         run: |
           mkdir -p bench/baseline
-          cp bench/results.json bench/baseline/bench.json
-
-      - name: Run comparison benchmarks
-        working-directory: packages/evlog
-        run: bunx vitest bench bench/comparison/
-
-      - name: Save comparison baseline
-        working-directory: packages/evlog
-        run: cp bench/results.json bench/baseline/comparison.json
-
-      - name: Measure bundle size
-        working-directory: packages/evlog
-        run: bun bench/scripts/size.ts --json > bench/baseline/size.json
-
-      - name: Generate RESULTS.md
-        working-directory: packages/evlog
-        run: bun bench/scripts/report.ts
+          bun bench/scripts/size.ts --json > bench/baseline/size.json
 
       - name: Create baseline PR
         uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: "chore(bench): update baseline"
-          title: "chore(bench): update baseline"
-          body: Automated benchmark baseline update from main.
+          commit-message: "chore(bench): update size baseline"
+          title: "chore(bench): update size baseline"
+          body: Automated bundle size baseline update from main.
           branch: chore/update-bench-baseline
           add-paths: |
-            packages/evlog/bench/baseline/
-            packages/evlog/bench/RESULTS.md
+            packages/evlog/bench/baseline/size.json
           delete-branch: true
           labels: performance
