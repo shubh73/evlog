@@ -25,6 +25,8 @@ jobs:
             docs
             playground
             evlog
+            core
+            bench
             nuxthub
             deps
             repo
