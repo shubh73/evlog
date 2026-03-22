@@ -1,5 +1,11 @@
 # evlog
 
+## 2.10.0
+
+### Minor Changes
+
+- [#225](https://github.com/HugoRCD/evlog/pull/225) [`3d1dcd4`](https://github.com/HugoRCD/evlog/commit/3d1dcd4678da83c05e754623b7443426231565ab) Thanks [@izadoesdev](https://github.com/izadoesdev)! - Add HyperDX drain adapter (`evlog/hyperdx`) for OTLP/HTTP ingest, with defaults aligned to [HyperDX OpenTelemetry documentation](https://hyperdx.io/docs/install/opentelemetry) (`https://in-otel.hyperdx.io`, `authorization` header). Includes docs site and `review-logging-patterns` skill updates.
+
 ## 2.9.0
 
 ### Minor Changes
